@@ -1,0 +1,52 @@
+type: MLDANet
+use_gpu: true
+use_xpu: false
+log_frequency: 50
+visualdl_frequency: 2000
+save_frequency: 1
+num_gpus: 1
+num_workers: 4
+freeze_bn: false
+
+data_path: /data2/zya/dataset/kitti
+log_dir: /data2/zya/output/mldanet
+model_name: mldanet
+seed: 123
+pose_model_input: pairs
+pose_model_type: separate_resnet
+png: false
+
+split: eigen_full
+num_layers: 18
+height: 192
+width: 640
+dataset: kitti
+disparity_smoothness: 0
+scales: [0, 1, 2, 3]
+min_depth: 0.1
+max_depth: 100.0
+use_stereo: false
+frame_ids: [0, -1, 1]
+
+use_depth_hints: true
+depth_hint_path: ../dataset/depth_hints
+
+batch_size: 2
+learning_rate: 0.0001
+start_epoch: 0
+num_epochs: 10
+scheduler_step_size: 2
+
+weights_init: pretrained
+load_weights_folder: ./weights
+pose_model_input: pairs
+models_to_load: ["encoder", "depth", "pose_encoder", "pose"]
+test_file: ../dataset/eigen/test_files.txt
+
+
+v1_multiscale: false
+avg_reprojection: false
+disable_automasking: false
+predictive_mask: false
+no_ssim: false
+avg_reprojection: false
