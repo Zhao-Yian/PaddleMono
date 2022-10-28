@@ -27,18 +27,16 @@ if __name__ == "__main__":
         cfg['num_layers'] = opts.num_layers
     if opts.disparity_smoothness is not None:
         cfg['disparity_smoothness'] = opts.disparity_smoothness
-    # cfg['scales'] = opts.scales
-    # cfg['min_depth'] = opts.min_depth
-    # cfg['max_depth'] = opts.max_depth
-    # cfg['use_stereo'] = opts.use_stereo
-    # cfg['frame_ids'] = opts.frame_ids
+    if opts.use_stereo is not None:
+        cfg['use_stereo'] = opts.use_stereo
     if opts.use_depth_hints is not None:
         cfg['use_depth_hints'] = opts.use_depth_hints
     if opts.depth_hint_path is not None:
         cfg['depth_hint_path'] = opts.depth_hint_path
-        
-    # cfg['scheduler_step_size'] = opts.scheduler_step_size
-    # cfg['weights_init'] = opts.weights_init
+    if opts.weights_init is not None:
+        cfg['weights_init'] = opts.weights_init
+    if opts.scheduler_step_size is not None:
+        cfg['scheduler_step_size'] = opts.scheduler_step_size
     if opts.model_name is not None:
         cfg['model_name'] = opts.model_name
     if opts.num_workers is not None:

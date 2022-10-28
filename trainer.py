@@ -172,7 +172,7 @@ class Trainer:
             print("There are {:d} testing items\n".format(len(test_filenames)))
             test_dataset = self.dataset(
                 self.opt.data_path, test_filenames, self.opt.height, self.opt.width,
-                self.opt.frame_ids, 4, self.opt.use_depth_hints, self.opt.depth_hint_path, is_train=False,
+                [0], 4, self.opt.use_depth_hints, self.opt.depth_hint_path, is_train=False,
                 img_ext=img_ext)
             test_sampler = paddle.io.DistributedBatchSampler(
                 dataset=test_dataset,

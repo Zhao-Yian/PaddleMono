@@ -66,27 +66,30 @@ class TrainOptions:
         self.parser.add_argument("--disparity_smoothness",
                                  type=float,
                                  help="disparity smoothness weight")
-        self.parser.add_argument("--scales",
-                                 nargs="+",
-                                 type=int,
-                                 help="scales used in the loss",
-                                 default=[0, 1, 2, 3])
-        self.parser.add_argument("--min_depth",
-                                 type=float,
-                                 help="minimum depth",
-                                 default=0.1)
-        self.parser.add_argument("--max_depth",
-                                 type=float,
-                                 help="maximum depth",
-                                 default=100.0)
+
+        # The below three args please config in the yaml file.
+        # self.parser.add_argument("--scales",
+        #                          nargs="+",
+        #                          type=int,
+        #                          help="scales used in the loss",
+        #                          default=[0, 1, 2, 3])
+        # self.parser.add_argument("--min_depth",
+        #                          type=float,
+        #                          help="minimum depth",
+        #                          default=0.1)
+        # self.parser.add_argument("--max_depth",
+        #                          type=float,
+        #                          help="maximum depth",
+        #                          default=100.0)
+        # self.parser.add_argument("--frame_ids",
+        #                          nargs="+",
+        #                          type=int,
+        #                          help="frames to load",
+        #                          default=[0, -1, 1])
         self.parser.add_argument("--use_stereo",
                                  help="if set, uses stereo pair for training",
                                  action="store_true")
-        self.parser.add_argument("--frame_ids",
-                                 nargs="+",
-                                 type=int,
-                                 help="frames to load",
-                                 default=[0, -1, 1])
+
 
         # DEPTH HINT options
         self.parser.add_argument("--use_depth_hints",
@@ -147,8 +150,7 @@ class TrainOptions:
         # SYSTEM options
         self.parser.add_argument("--num_workers",
                                  type=int,
-                                 help="number of dataloader workers",
-                                 default=1)
+                                 help="number of dataloader workers")
 
         # LOADING options
         self.parser.add_argument("--load_weights_folder",
@@ -172,6 +174,7 @@ class TrainOptions:
                                  help="number of epochs between each save")
 
         # EVALUATION options
+        # Those below args are not support, please config them in the yaml file if you need.
         self.parser.add_argument("--eval_stereo",
                                  help="if set evaluates in stereo mode",
                                  action="store_true")
@@ -183,8 +186,7 @@ class TrainOptions:
                                  action="store_true")
         self.parser.add_argument("--pred_depth_scale_factor",
                                  help="if set multiplies predictions by this number",
-                                 type=float,
-                                 default=1)
+                                 type=float)
         self.parser.add_argument("--ext_disp_to_eval",
                                  type=str,
                                  help="optional path to a .npy disparities file to evaluate")
