@@ -6,11 +6,10 @@ import paddle
 from paddle.io import DataLoader
 from tqdm import tqdm
 import argparse
-
 from model.layers import disp_to_depth
 from utils import readlines, load_weight_file
 import datasets
-import model.monodepthv2 as networks
+from model.core import build_model
 
 cv2.setNumThreads(0)  # This speeds up evaluation 5x on our unix systems (OpenCV 3.3.1)
 
@@ -87,15 +86,15 @@ def evaluate(opt):
 
         dataloader = DataLoader(dataset, batch_size=16, shuffle=False, num_workers=opt.num_workers, drop_last=False)
 
-        encoder = networks.ResnetEncoder(opt.num_layers, 'scratch')
-        depth_decoder = networks.DepthDecoder(encoder.num_ch_enc)
+        models, _ = build_model(opt)
 
-        model_dict = encoder.state_dict()
-        encoder.load_dict({k: v for k, v in encoder_dict.items() if k in model_dict})
-        depth_decoder.load_dict(load_weight_file(decoder_path))
 
-        encoder.eval()
-        depth_decoder.eval()
+        model_dict = models["encoder"].state_dict()
+        models["encoder"].load_dict({k: v for k, v in encoder_dict.items() if k in model_dict})
+        models["depth"].load_dict(load_weight_file(decoder_path))
+
+        models["encoder"].eval()
+        models["depth"].eval()
 
         pred_disps = []
 
@@ -110,7 +109,7 @@ def evaluate(opt):
                     # Post-processed results require each image to have two forward passes
                     input_color = paddle.concat((input_color, paddle.flip(input_color, [3])), 0)
 
-                output = depth_decoder(encoder(input_color))
+                output = models["depth"](models["encoder"](input_color))
 
                 pred_disp, _ = disp_to_depth(output[("disp", 0)], opt.min_depth, opt.max_depth)
                 pred_disp = pred_disp.cpu()[:, 0].numpy()
@@ -228,8 +227,10 @@ class MonodepthOptions:
     def __init__(self):
         self.parser = argparse.ArgumentParser(description="Monodepthv2 options")
         # CFG
-        self.parser.add_argument(
-        "--config", dest="cfg", help="The config file.", default=None, type=str)
+        self.parser.add_argument("--type",
+                                 type=str,
+                                 help="path to the training data",
+                                 default="MonoDepthv2")
 
         # PATHS
         self.parser.add_argument("--data_path",
@@ -435,4 +436,5 @@ class MonodepthOptions:
 
 if __name__ == "__main__":
     options = MonodepthOptions()
-    evaluate(options.parse())
+    opts = options.parse()
+    evaluate(opts)

@@ -41,7 +41,7 @@ def get_logger(filename, verbosity=1, name=None):
 
 
 class Trainer:
-    def __init__(self, options, do_test=False):
+    def __init__(self, options):
         self.opt = options
         setup_seed(self.opt.seed)
         self.rank = paddle.distributed.get_rank()
@@ -92,95 +92,93 @@ class Trainer:
 
         img_ext = '.png' if self.opt.png else '.jpg'
         # ============= 加载数据集 ==============
-        if not do_test:
-            fpath = os.path.join(os.path.dirname(__file__), "splits", self.opt.split, "{}_files.txt")
+        fpath = os.path.join(os.path.dirname(__file__), "splits", self.opt.split, "{}_files.txt")
 
-            train_filenames = readlines(fpath.format("train"))
+        train_filenames = readlines(fpath.format("train"))
 
-            # 删除第一帧和最后一帧
-            mid_filenames = []
-            for name in train_filenames:
-                f_str = "{:010d}{}".format(int(name.split(' ')[1]) - 1, img_ext)
-                image_path1 = os.path.join(self.opt.data_path, name.split(' ')[0], "image_00/data", f_str)
+        # 删除第一帧和最后一帧
+        mid_filenames = []
+        for name in train_filenames:
+            f_str = "{:010d}{}".format(int(name.split(' ')[1]) - 1, img_ext)
+            image_path1 = os.path.join(self.opt.data_path, name.split(' ')[0], "image_00/data", f_str)
 
-                f_str = "{:010d}{}".format(int(name.split(' ')[1]) + 1, img_ext)
-                image_path2 = os.path.join(self.opt.data_path, name.split(' ')[0], "image_00/data", f_str)
+            f_str = "{:010d}{}".format(int(name.split(' ')[1]) + 1, img_ext)
+            image_path2 = os.path.join(self.opt.data_path, name.split(' ')[0], "image_00/data", f_str)
 
-                f_str = "{:010d}{}".format(int(name.split(' ')[1]), img_ext)
-                image_path3 = os.path.join(self.opt.data_path, name.split(' ')[0], "image_00/data", f_str)
-                if os.path.exists(image_path1) and os.path.exists(image_path2) and os.path.exists(image_path3):
-                    mid_filenames.append(name)
-            train_filenames = mid_filenames
+            f_str = "{:010d}{}".format(int(name.split(' ')[1]), img_ext)
+            image_path3 = os.path.join(self.opt.data_path, name.split(' ')[0], "image_00/data", f_str)
+            if os.path.exists(image_path1) and os.path.exists(image_path2) and os.path.exists(image_path3):
+                mid_filenames.append(name)
+        train_filenames = mid_filenames
 
-            val_filenames = readlines(fpath.format("val"))
-            mid_filenames = []
-            for name in val_filenames:
-                f_str = "{:010d}{}".format(int(name.split(' ')[1]) - 1, img_ext)
-                image_path1 = os.path.join(self.opt.data_path, name.split(' ')[0], "image_00/data", f_str)
+        val_filenames = readlines(fpath.format("val"))
+        mid_filenames = []
+        for name in val_filenames:
+            f_str = "{:010d}{}".format(int(name.split(' ')[1]) - 1, img_ext)
+            image_path1 = os.path.join(self.opt.data_path, name.split(' ')[0], "image_00/data", f_str)
 
-                f_str = "{:010d}{}".format(int(name.split(' ')[1]) + 1, img_ext)
-                image_path2 = os.path.join(self.opt.data_path, name.split(' ')[0], "image_00/data", f_str)
+            f_str = "{:010d}{}".format(int(name.split(' ')[1]) + 1, img_ext)
+            image_path2 = os.path.join(self.opt.data_path, name.split(' ')[0], "image_00/data", f_str)
 
-                f_str = "{:010d}{}".format(int(name.split(' ')[1]), img_ext)
-                image_path3 = os.path.join(self.opt.data_path, name.split(' ')[0], "image_00/data", f_str)
-                if os.path.exists(image_path1) and os.path.exists(image_path2) and os.path.exists(image_path3):
-                    mid_filenames.append(name)
-            val_filenames = mid_filenames
+            f_str = "{:010d}{}".format(int(name.split(' ')[1]), img_ext)
+            image_path3 = os.path.join(self.opt.data_path, name.split(' ')[0], "image_00/data", f_str)
+            if os.path.exists(image_path1) and os.path.exists(image_path2) and os.path.exists(image_path3):
+                mid_filenames.append(name)
+        val_filenames = mid_filenames
 
-            self.batch_size = self.opt.batch_size * max(1, self.opt.num_gpus)
+        self.batch_size = self.opt.batch_size * max(1, self.opt.num_gpus)
 
-            num_train_samples = len(train_filenames)
-            self.num_total_steps = num_train_samples // self.batch_size * self.opt.num_epochs
+        num_train_samples = len(train_filenames)
+        self.num_total_steps = num_train_samples // self.batch_size * self.opt.num_epochs
 
-            train_dataset = self.dataset(
-                self.opt.data_path, train_filenames, self.opt.height, self.opt.width,
-                self.opt.frame_ids, 4, self.opt.use_depth_hints, self.opt.depth_hint_path, is_train=True, img_ext=img_ext)
-            train_sampler = paddle.io.DistributedBatchSampler(
-                dataset=train_dataset,
-                batch_size=self.opt.batch_size,
-                shuffle=True,
-                drop_last=True
-            )
-            self.train_loader = DataLoader(train_dataset, batch_sampler=train_sampler, num_workers=self.opt.num_workers,
-                                           worker_init_fn=setup_seed)
-            val_dataset = self.dataset(
-                self.opt.data_path, val_filenames, self.opt.height, self.opt.width,
-                self.opt.frame_ids, 4, self.opt.use_depth_hints, self.opt.depth_hint_path, is_train=False, img_ext=img_ext)
-            val_sampler = paddle.io.DistributedBatchSampler(
-                dataset=val_dataset,
-                batch_size=self.opt.batch_size,
-                shuffle=False,
-                drop_last=True
-            )
-            self.val_loader = DataLoader(val_dataset, batch_sampler=val_sampler, num_workers=self.opt.num_workers)
-            self.val_iter = iter(self.val_loader)
+        train_dataset = self.dataset(
+            self.opt.data_path, train_filenames, self.opt.height, self.opt.width,
+            self.opt.frame_ids, 4, self.opt.use_depth_hints, self.opt.depth_hint_path, is_train=True, img_ext=img_ext)
+        train_sampler = paddle.io.DistributedBatchSampler(
+            dataset=train_dataset,
+            batch_size=self.opt.batch_size,
+            shuffle=True,
+            drop_last=True
+        )
+        self.train_loader = DataLoader(train_dataset, batch_sampler=train_sampler, num_workers=self.opt.num_workers,
+                                       worker_init_fn=setup_seed)
+        val_dataset = self.dataset(
+            self.opt.data_path, val_filenames, self.opt.height, self.opt.width,
+            self.opt.frame_ids, 4, self.opt.use_depth_hints, self.opt.depth_hint_path, is_train=False, img_ext=img_ext)
+        val_sampler = paddle.io.DistributedBatchSampler(
+            dataset=val_dataset,
+            batch_size=self.opt.batch_size,
+            shuffle=False,
+            drop_last=True
+        )
+        self.val_loader = DataLoader(val_dataset, batch_sampler=val_sampler, num_workers=self.opt.num_workers)
+        self.val_iter = iter(self.val_loader)
 
-            self.writers = {}
-            if self.rank == 0:
-                for mode in ["train", "val"]:
-                    self.writers[mode] = LogWriter(os.path.join(self.log_path, mode))
+        self.writers = {}
+        if self.rank == 0:
+            for mode in ["train", "val"]:
+                self.writers[mode] = LogWriter(os.path.join(self.log_path, mode))
 
-            if self.rank == 0:
-                print("Using split:\n  ", self.opt.split)
-                print("There are {:d} training items and {:d} validation items\n".format(len(train_dataset),
-                                                                                         len(val_dataset)))
-                self.save_opts()
-        else:
-            # 加载测试数据集
-            test_filenames = readlines(self.opt.test_file)
-
-            print("There are {:d} testing items\n".format(len(test_filenames)))
-            test_dataset = self.dataset(
-                self.opt.data_path, test_filenames, self.opt.height, self.opt.width,
-                [0], 4, self.opt.use_depth_hints, self.opt.depth_hint_path, is_train=False,
-                img_ext=img_ext)
-            test_sampler = paddle.io.DistributedBatchSampler(
-                dataset=test_dataset,
-                batch_size=self.opt.batch_size,
-                shuffle=False,
-                drop_last=True
-            )
-            self.test_loader = DataLoader(test_dataset, batch_sampler=test_sampler, num_workers=self.opt.num_workers)
+        if self.rank == 0:
+            print("Using split:\n  ", self.opt.split)
+            print("There are {:d} training items and {:d} validation items\n".format(len(train_dataset),
+                                                                                     len(val_dataset)))
+            self.save_opts()
+        # # 加载测试数据集
+        # test_filenames = readlines(self.opt.test_file)
+        #
+        # print("There are {:d} testing items\n".format(len(test_filenames)))
+        # test_dataset = self.dataset(
+        #     self.opt.data_path, test_filenames, self.opt.height, self.opt.width,
+        #     [0], 4, self.opt.use_depth_hints, self.opt.depth_hint_path, is_train=False,
+        #     img_ext=img_ext)
+        # test_sampler = paddle.io.DistributedBatchSampler(
+        #     dataset=test_dataset,
+        #     batch_size=self.opt.batch_size,
+        #     shuffle=False,
+        #     drop_last=True
+        # )
+        # self.test_loader = DataLoader(test_dataset, batch_sampler=test_sampler, num_workers=self.opt.num_workers)
 
         if not self.opt.no_ssim:
             self.ssim = SSIM()
