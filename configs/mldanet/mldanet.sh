@@ -15,3 +15,6 @@ CUDA_VISIBLE_DEVICES=$GPU_ID python train.py --config configs/mldanet/mldanet.ym
 
 # fintune in KITTI
 CUDA_VISIBLE_DEVICES=$GPU_ID python train.py --config configs/mldanet/mldanet.yml --data_path $data_dir --height 320 --width 1024 --load_weights_folder $output_dir --batch_size 4 --num_epochs 2 --learning_rate 5e-5
+
+# test the result
+CUDA_VISIBLE_DEVICES=$GPU_ID python evaluate_depth.py --type MLDANet --load_weights_folder $output_fine_dir --eval_mono --data_path $test_dir --num_workers 4
