@@ -54,3 +54,4 @@ disable_automasking: false
 predictive_mask: false
 no_ssim: false
 avg_reprojection: false
+find_unused_parameters: false

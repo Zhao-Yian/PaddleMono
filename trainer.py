@@ -76,7 +76,7 @@ class Trainer:
         if init_parallel:
             for name, model in self.models.items():
                 # model = paddle.nn.SyncBatchNorm.convert_sync_batchnorm(model)
-                self.models[name] = paddle.DataParallel(model)
+                self.models[name] = paddle.DataParallel(model, find_unused_parameters=self.opt.find_unused_parameters)
 
         if self.opt.load_weights_folder is not None and self.opt.load_weights_folder != 'None':
             self.load_model()

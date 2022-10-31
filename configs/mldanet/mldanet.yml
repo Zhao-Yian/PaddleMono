@@ -3,7 +3,7 @@ use_gpu: true
 use_xpu: false
 log_frequency: 50
 visualdl_frequency: 2000
-save_frequency: 1
+save_frequency: 2
 num_gpus: 1
 num_workers: 4
 freeze_bn: false
@@ -31,11 +31,11 @@ frame_ids: [0, -1, 1]
 use_depth_hints: true
 depth_hint_path: ../dataset/depth_hints
 
-batch_size: 2
+batch_size: 8
 learning_rate: 0.0001
 start_epoch: 0
-num_epochs: 10
-scheduler_step_size: 2
+num_epochs: 150
+scheduler_step_size: 30
 
 weights_init: pretrained
 load_weights_folder: ./weights
@@ -50,3 +50,4 @@ disable_automasking: false
 predictive_mask: false
 no_ssim: false
 avg_reprojection: false
+find_unused_parameters: true
