@@ -111,7 +111,9 @@ class Trainer:
                 mid_filenames.append(name)
         train_filenames = mid_filenames
 
-        val_filenames = readlines(fpath.format("val"))
+        # for self-supervised depth estimation, use the eigen test to evaluate
+        test_fpath = os.path.join(os.path.dirname(__file__), "splits", "eigen", "test_files.txt")
+        val_filenames = readlines(test_fpath)
         mid_filenames = []
         for name in val_filenames:
             f_str = "{:010d}{}".format(int(name.split(' ')[1]) - 1, img_ext)
@@ -144,7 +146,7 @@ class Trainer:
                                        worker_init_fn=setup_seed)
         val_dataset = self.dataset(
             self.opt.data_path, val_filenames, self.opt.height, self.opt.width,
-            self.opt.frame_ids, 4, self.opt.use_depth_hints, self.opt.depth_hint_path, is_train=False, img_ext=img_ext)
+            self.opt.frame_ids, 4, is_train=False, img_ext=img_ext)
         val_sampler = paddle.io.DistributedBatchSampler(
             dataset=val_dataset,
             batch_size=self.opt.batch_size,

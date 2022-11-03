@@ -12,7 +12,7 @@ model_name: monodepthv2
 
 num_gpus: 1
 seed: 120
-split: eigen_full
+split: eigen_zhou
 num_layers: 18
 dataset: kitti
 height: 192
