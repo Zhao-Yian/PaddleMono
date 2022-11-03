@@ -10,6 +10,9 @@ from model.layers import disp_to_depth
 from utils import readlines, load_weight_file
 import datasets
 from model.core import build_model
+import torch
+from collections import OrderedDict
+import pickle
 
 cv2.setNumThreads(0)  # This speeds up evaluation 5x on our unix systems (OpenCV 3.3.1)
 
@@ -55,6 +58,36 @@ def batch_post_process_disparity(l_disp, r_disp):
     return r_mask * l_disp + l_mask * r_disp + (1.0 - l_mask - r_mask) * m_disp
 
 
+def pytorch2paddle(opt, torch_path, paddle_path):
+    models, _ = build_model(opt)
+    for model_name in models.keys():
+        paddle_list = models[model_name].state_dict().keys()
+        map_location = torch.device('cpu')
+        state_dict = torch.load(os.path.join(torch_path,'{}.pth'.format(model_name)), map_location=map_location)
+
+        paddle_state_dict = OrderedDict()
+        paddle_list = paddle_list.readlines()
+        torch_list = state_dict.keys()
+        for p in paddle_list:
+            p = p.strip()
+            t = p
+            if "mean" in p:
+                t = p.replace("_mean", "running_mean")
+            if "variance" in p:
+                t = p.replace("_variance", "running_var")
+            if t in torch_list:
+                if 'fc' not in p:
+                    paddle_state_dict[p] = state_dict[t].detach().cpu().numpy()
+                else:
+                    paddle_state_dict[p] = state_dict[t].detach().cpu().numpy().T
+            else:
+                print(p)
+
+        f = open(os.path.join(paddle_path, '{}.pdparams'.format(model_name)), 'wb')
+        pickle.dump(paddle_state_dict, f)
+        f.close()
+
+
 def evaluate(opt):
     """Evaluates a pretrained model using a specified test set
     """
@@ -81,7 +114,7 @@ def evaluate(opt):
 
         img_ext = '.png' if opt.png else '.jpg'
         dataset = datasets.KITTIRAWDataset(opt.data_path, filenames,
-                                           encoder_dict['height'], encoder_dict['width'],
+                                           opt.height, opt.width,
                                            [0], 4, is_train=False, img_ext=img_ext)
 
         dataloader = DataLoader(dataset, batch_size=16, shuffle=False, num_workers=opt.num_workers, drop_last=False)
@@ -99,7 +132,7 @@ def evaluate(opt):
         pred_disps = []
 
         print("-> Computing predictions with size {}x{}".format(
-            encoder_dict['width'], encoder_dict['height']))
+            opt.width, opt.height))
 
         with paddle.no_grad():
             for data in tqdm(iter(dataloader)):

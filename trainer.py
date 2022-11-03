@@ -146,7 +146,7 @@ class Trainer:
                                        worker_init_fn=setup_seed)
         val_dataset = self.dataset(
             self.opt.data_path, val_filenames, self.opt.height, self.opt.width,
-            self.opt.frame_ids, 4, is_train=False, img_ext=img_ext)
+            self.opt.frame_ids, 4, self.opt.use_depth_hints, self.opt.depth_hint_path, is_train=False, img_ext=img_ext)
         val_sampler = paddle.io.DistributedBatchSampler(
             dataset=val_dataset,
             batch_size=self.opt.batch_size,
@@ -715,11 +715,6 @@ class Trainer:
         for model_name, model in self.models.items():
             save_path = os.path.join(save_folder, "{}.pdparams".format(model_name))
             to_save = model.state_dict()
-            if model_name == 'encoder':
-                # save the sizes - these are needed at prediction time
-                to_save['height'] = self.opt.height
-                to_save['width'] = self.opt.width
-                to_save['use_stereo'] = self.opt.use_stereo
             paddle.save(to_save, save_path)
 
         # do not save parameter in the optimizor to save space
