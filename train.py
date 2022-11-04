@@ -27,10 +27,14 @@ if __name__ == "__main__":
         cfg['num_layers'] = opts.num_layers
     if opts.disparity_smoothness is not None:
         cfg['disparity_smoothness'] = opts.disparity_smoothness
-    if opts.use_stereo is not None:
+    if opts.use_stereo:
         cfg['use_stereo'] = opts.use_stereo
-    if opts.use_depth_hints is not None:
+    if opts.use_depth_hints:
         cfg['use_depth_hints'] = opts.use_depth_hints
+    if opts.png:
+        cfg['png'] = opts.png
+    if opts.freeze_bn:
+        cfg['freeze_bn'] = opts.freeze_bn
     if opts.depth_hint_path is not None:
         cfg['depth_hint_path'] = opts.depth_hint_path
     if opts.weights_init is not None:
@@ -61,9 +65,9 @@ if __name__ == "__main__":
         cfg['save_frequency'] = opts.save_frequency
     if opts.visualdl_frequency is not None:
         cfg['visualdl_frequency'] = opts.visualdl_frequency
-    if opts.eval_mono is not None:
+    if opts.eval_mono:
         cfg['eval_mono'] = opts.eval_mono
-    if opts.eval_stereo is not None:
+    if opts.eval_stereo:
         cfg['eval_stereo'] = opts.eval_stereo
     cfg['ext_disp_to_eval'] = opts.ext_disp_to_eval
     cfg['eval_out_dir'] = opts.eval_out_dir
