@@ -17,6 +17,8 @@ import paddle.nn.functional as F
 from paddle import optimizer
 from paddle.io import DataLoader
 import paddle.distributed as dist
+from pathlib import Path
+from evaluate_depth import evaluate
 
 import logging
 
@@ -111,9 +113,8 @@ class Trainer:
                 mid_filenames.append(name)
         train_filenames = mid_filenames
 
-        # for self-supervised depth estimation, use the eigen test to evaluate
-        test_fpath = os.path.join(os.path.dirname(__file__), "splits", "eigen", "test_files.txt")
-        val_filenames = readlines(test_fpath)
+        # for self-supervised depth estimation, the val_dataset is not used.
+        val_filenames = readlines(fpath.format("val"))
         mid_filenames = []
         for name in val_filenames:
             f_str = "{:010d}{}".format(int(name.split(' ')[1]) - 1, img_ext)
@@ -166,21 +167,6 @@ class Trainer:
             print("There are {:d} training items and {:d} validation items\n".format(len(train_dataset),
                                                                                      len(val_dataset)))
             self.save_opts()
-        # # 加载测试数据集
-        # test_filenames = readlines(self.opt.test_file)
-        #
-        # print("There are {:d} testing items\n".format(len(test_filenames)))
-        # test_dataset = self.dataset(
-        #     self.opt.data_path, test_filenames, self.opt.height, self.opt.width,
-        #     [0], 4, self.opt.use_depth_hints, self.opt.depth_hint_path, is_train=False,
-        #     img_ext=img_ext)
-        # test_sampler = paddle.io.DistributedBatchSampler(
-        #     dataset=test_dataset,
-        #     batch_size=self.opt.batch_size,
-        #     shuffle=False,
-        #     drop_last=True
-        # )
-        # self.test_loader = DataLoader(test_dataset, batch_sampler=test_sampler, num_workers=self.opt.num_workers)
 
         if not self.opt.no_ssim:
             self.ssim = SSIM()
@@ -220,6 +206,7 @@ class Trainer:
         self.epoch = 0
         self.step = 0
         best_val_loss = float("inf")
+        weights_floder = None
         self.start_time = time.time()
         os.makedirs(self.log_path, exist_ok=True)
         self.logger = get_logger(self.log_path + '/train.log')
@@ -228,12 +215,13 @@ class Trainer:
         for self.epoch in range(self.opt.start_epoch, self.opt.num_epochs):
             self.run_epoch()
             if self.rank == 0 and (self.epoch + 1) % self.opt.save_frequency == 0:
-                self.save_model(self.epoch)
+                weights_floder = self.save_model(self.epoch)
 
-            val_loss = self.val()
-            self.logger.info(f'In epoch {self.epoch}, the validation loss is {val_loss}.')
-            if val_loss < best_val_loss:
-                best_val_loss = val_loss
+            # val_loss = self.val()
+            abs_rel = evaluate(self.opt, weights_floder)
+            self.logger.info(f'In epoch {self.epoch}, the abs_rel is {abs_rel}.')
+            if abs_rel < best_val_loss:
+                best_val_loss = abs_rel
                 if self.rank == 0: self.save_model("best")
 
     def run_epoch(self):
@@ -407,37 +395,6 @@ class Trainer:
         self.logger.info(f'[EVAL:] The validation loss is {val_loss}.')
         return val_loss
 
-    def predict(self):
-        """
-        Test the model on the eigen test set
-        """
-        self.set_eval()
-        if self.rank == 0: print("Testing")
-
-        with paddle.no_grad():
-            loss_list = []
-            errors = []
-            for batch_idx, inputs in tqdm.tqdm(enumerate(self.test_loader)):
-                outputs, losses = self.process_batch(inputs)
-                loss_list.append(losses["loss"].numpy()[0])
-
-                if "depth_gt" in inputs:
-                    self.compute_depth_losses(inputs, outputs, losses)
-
-                    # 添加评价指标
-                    metric_list = []
-                    for k in self.depth_metric_names:
-                        metric_list.append(losses[k])
-                    errors.append(metric_list)
-            if "depth_gt" in inputs:
-                mean_errors = np.mean(np.array(errors), axis=0)
-
-        if "depth_gt" in inputs:
-            # 打印信息
-            print("eval")
-            print("  " + ("{:>8} | " * 7).format("abs_rel", "sq_rel", "rmse", "rmse_log", "a1", "a2", "a3"))
-            print(("&{: 8.3f}  " * 7).format(*mean_errors.tolist()) + "\\\\")
-            print("-> Done!")
 
     def generate_images_pred(self, inputs, outputs):
         """
@@ -716,7 +673,7 @@ class Trainer:
             save_path = os.path.join(save_folder, "{}.pdparams".format(model_name))
             to_save = model.state_dict()
             paddle.save(to_save, save_path)
-
+        return save_folder
         # do not save parameter in the optimizor to save space
         # save_path = os.path.join(save_folder, "{}.pdparams".format("adam"))
         # paddle.save(self.model_optimizer.state_dict(), save_path)

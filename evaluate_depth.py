@@ -13,6 +13,7 @@ from model.core import build_model
 import torch
 from collections import OrderedDict
 import pickle
+from pathlib import Path
 
 cv2.setNumThreads(0)  # This speeds up evaluation 5x on our unix systems (OpenCV 3.3.1)
 
@@ -88,11 +89,13 @@ def pytorch2paddle(opt, torch_path, paddle_path):
         f.close()
 
 
-def evaluate(opt):
+def evaluate(opt, load_weight_floder=None):
     """Evaluates a pretrained model using a specified test set
     """
     MIN_DEPTH = 1e-3
     MAX_DEPTH = 80
+    if load_weight_floder is not None:
+        opt.load_weights_folder = load_weight_floder  # 更新
 
     assert sum((opt.eval_mono, opt.eval_stereo)) == 1, \
         "Please choose mono or stereo evaluation by setting either --eval_mono or --eval_stereo"
@@ -113,7 +116,8 @@ def evaluate(opt):
         encoder_dict = load_weight_file(encoder_path)
 
         img_ext = '.png' if opt.png else '.jpg'
-        dataset = datasets.KITTIRAWDataset(opt.data_path, filenames,
+        test_data_path = str(Path(opt.data_path).parent.joinpath("eigen"))
+        dataset = datasets.KITTIRAWDataset(test_data_path, filenames,
                                            opt.height, opt.width,
                                            [0], 4, is_train=False, img_ext=img_ext)
 
@@ -254,6 +258,7 @@ def evaluate(opt):
     print("\n  " + ("{:>8} | " * 7).format("abs_rel", "sq_rel", "rmse", "rmse_log", "a1", "a2", "a3"))
     print(("&{: 8.3f}  " * 7).format(*mean_errors.tolist()) + "\\\\")
     print("\n-> Done!")
+    return mean_errors[0]
 
 
 class MonodepthOptions:
@@ -270,10 +275,6 @@ class MonodepthOptions:
                                  type=str,
                                  help="path to the training data",
                                  default=os.path.join(file_dir, "kitti_data"))
-        self.parser.add_argument("--log_dir",
-                                 type=str,
-                                 help="log directory",
-                                 default=os.path.join(os.path.expanduser("~"), "tmp"))
 
         # TRAINING options
         self.parser.add_argument('--num_gpus',
@@ -343,24 +344,6 @@ class MonodepthOptions:
                                  help="frames to load",
                                  default=[0, -1, 1])
 
-        # OPTIMIZATION options
-        self.parser.add_argument("--batch_size",
-                                 type=int,
-                                 help="batch size",
-                                 default=12)
-        self.parser.add_argument("--learning_rate",
-                                 type=float,
-                                 help="learning rate",
-                                 default=1e-4)
-        self.parser.add_argument("--num_epochs",
-                                 type=int,
-                                 help="number of epochs",
-                                 default=20)
-        self.parser.add_argument("--scheduler_step_size",
-                                 type=int,
-                                 help="step size of the scheduler",
-                                 default=15)
-
         # ABLATION options
         self.parser.add_argument("--v1_multiscale",
                                  help="if set, uses monodepth v1 multiscale",
@@ -408,19 +391,6 @@ class MonodepthOptions:
                                  help="models to load",
                                  default=["encoder", "depth", "pose_encoder", "pose"])
 
-        # LOGGING options
-        self.parser.add_argument("--log_frequency",
-                                 type=int,
-                                 help="number of batches between each console log",
-                                 default=100)
-        self.parser.add_argument("--visualdl_frequency",
-                                 type=int,
-                                 help="number of batches between each visualdl log",
-                                 default=2000)
-        self.parser.add_argument("--save_frequency",
-                                 type=int,
-                                 help="number of epochs between each save",
-                                 default=1)
 
         # EVALUATION options
         self.parser.add_argument("--eval_stereo",

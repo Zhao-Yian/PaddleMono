@@ -61,8 +61,24 @@ if __name__ == "__main__":
         cfg['save_frequency'] = opts.save_frequency
     if opts.visualdl_frequency is not None:
         cfg['visualdl_frequency'] = opts.visualdl_frequency
-
-
+    if opts.eval_mono is not None:
+        cfg['eval_mono'] = opts.eval_mono
+    if opts.eval_stereo is not None:
+        cfg['eval_stereo'] = opts.eval_stereo
+    cfg['ext_disp_to_eval'] = opts.ext_disp_to_eval
+    cfg['eval_out_dir'] = opts.eval_out_dir
+    if opts.eval_split is not None:
+        cfg['eval_split'] = opts.eval_split
+    if opts.post_process:
+        cfg['post_process'] = opts.post_process
+    if opts.save_pred_disps:
+        cfg['save_pred_disps'] = opts.save_pred_disps
+    if opts.no_eval:
+        cfg['no_eval'] = opts.no_eval
+    if opts.eval_eigen_to_benchmark:
+        cfg['eval_eigen_to_benchmark'] = opts.eval_eigen_to_benchmark
+    if opts.disable_median_scaling:
+        cfg['disable_median_scaling'] = opts.disable_median_scaling
     merge_config(opts.opt)
     # disable npu in config by default
     if 'use_npu' not in cfg:
