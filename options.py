@@ -52,7 +52,6 @@ class TrainOptions:
         self.parser.add_argument("--dataset",
                                  type=str,
                                  help="dataset to train on",
-                                 default="kitti",
                                  choices=["kitti", "kitti_odom", "kitti_depth", "kitti_test"])
         self.parser.add_argument("--png",
                                  help="if set, trains from raw KITTI png files (instead of jpgs)",
@@ -134,17 +133,14 @@ class TrainOptions:
                                  action="store_true")
         self.parser.add_argument("--weights_init",
                                  type=str,
-                                 help="choose from default (paddle pretrained weights), scratch, or a path to a custom weight file.",
-                                 default="pretrained")
+                                 help="choose from default (paddle pretrained weights), scratch, or a path to a custom weight file.")
         self.parser.add_argument("--pose_model_input",
                                  type=str,
                                  help="how many images the pose network gets",
-                                 default="pairs",
                                  choices=["pairs", "all"])
         self.parser.add_argument("--pose_model_type",
                                  type=str,
                                  help="normal or shared",
-                                 default="separate_resnet",
                                  choices=["posecnn", "separate_resnet", "shared"])
 
         # SYSTEM options
@@ -192,7 +188,6 @@ class TrainOptions:
                                  help="optional path to a .npy disparities file to evaluate")
         self.parser.add_argument("--eval_split",
                                  type=str,
-                                 default="eigen",
                                  choices=[
                                     "eigen", "eigen_benchmark", "benchmark", "odom_9", "odom_10"],
                                  help="which split to run eval on")
