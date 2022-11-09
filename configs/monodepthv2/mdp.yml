@@ -7,7 +7,7 @@ save_frequency: 1
 freeze_bn: false
 
 data_path: /data2/zya/dataset/kitti
-log_dir: /data2/zya/output/monodepthv2
+log_dir: /data2/zya/output
 model_name: monodepthv2
 
 num_gpus: 1
@@ -22,7 +22,7 @@ disparity_smoothness: 0.001
 scales: [0, 1, 2, 3]
 min_depth: 0.1
 max_depth: 100.0
-use_stereo: false
+use_stereo: true
 frame_ids: [0, -1, 1]
 eval_mono: true
 eval_stereo: false

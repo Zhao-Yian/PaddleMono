@@ -25,7 +25,7 @@ def resnet_multiimage_input(num_layers, pretrained=False, num_input_images=1):
         num_input_images (int): Number of frames stacked as input
     """
     assert num_layers in [18, 34, 50, 101, 152], "Can only run with 18, 34 50, 101, 152 layer resnet"
-    block_type = models.resnet.BasicBlock if num_layers <= 34 else models.resnet.Bottleneck
+    block_type = models.resnet.BasicBlock if num_layers <= 34 else models.resnet.BottleneckBlock
     model = ResNetMultiImageInput(block_type, num_layers, num_input_images=num_input_images)
 
     if pretrained is True:

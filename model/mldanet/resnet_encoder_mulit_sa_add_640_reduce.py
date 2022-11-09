@@ -12,6 +12,8 @@ import paddle
 import paddle.nn as nn
 import paddle.vision.models as models
 from paddle.nn import functional as F
+from paddle.utils.download import get_weights_path_from_url
+from utils import load_weight_file
 
 
 def weights_init(modules, type='xavier'):
@@ -63,17 +65,19 @@ def resnet_multiimage_input(num_layers, pretrained=False, num_input_images=1):
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         num_input_images (int): Number of frames stacked as input
     """
-    assert num_layers in [18, 50], "Can only run with 18 or 50 layer resnet"
-    block_type = {18: models.resnet.BasicBlock, 50: models.resnet.BottleneckBlock}[num_layers]
+    assert num_layers in [18, 34, 50, 101, 152], "Can only run with 18, 34 50, 101, 152 layer resnet"
+    block_type = models.resnet.BasicBlock if num_layers <= 34 else models.resnet.BottleneckBlock
     model = ResNetMultiImageInput(block_type, num_layers, num_input_images=num_input_images)
 
-    if pretrained:
-        if num_layers == 18:
-            loaded = paddle.vision.models.resnet18(True).state_dict()
-        else:
-            loaded = paddle.vision.models.resnet50(True).state_dict()
+    if pretrained is True:
+        loaded = paddle.load(get_weights_path_from_url(*models.resnet.model_urls['resnet{}'.format(num_layers)]))
         loaded['conv1.weight'] = paddle.concat([loaded['conv1.weight']] * num_input_images, 1) / num_input_images
-        model.set_state_dict(loaded)
+        model.load_dict(loaded)
+    elif isinstance(pretrained, str):
+        loaded = load_weight_file(pretrained)
+        loaded['conv1.weight'] = paddle.concat([loaded['conv1.weight']] * num_input_images, 1) / num_input_images
+        model.load_dict(loaded)
+
     return model
 
 
@@ -192,10 +196,22 @@ class ResnetEncoder_multi_sa_add_reduce_640(nn.Layer):
         if num_layers not in resnets:
             raise ValueError("{} is not a valid number of resnet layers".format(num_layers))
 
-        if num_input_images > 1:
-            self.encoder = resnet_multiimage_input(num_layers, pretrained, num_input_images)
+        if pretrained == 'pretrained':
+            if num_input_images > 1:
+                self.encoder = resnet_multiimage_input(num_layers, True, num_input_images)
+            else:
+                self.encoder = resnets[num_layers](True)
+        elif pretrained == 'scratch':
+            if num_input_images > 1:
+                self.encoder = resnet_multiimage_input(num_layers, False, num_input_images)
+            else:
+                self.encoder = resnets[num_layers](False)
         else:
-            self.encoder = resnets[num_layers](pretrained)
+            if num_input_images > 1:
+                self.encoder = resnet_multiimage_input(num_layers, pretrained, num_input_images)
+            else:
+                self.encoder = resnets[num_layers](False)
+                self.encoder.load_dict(load_weight_file(pretrained))
 
         if num_layers > 34:
             self.num_ch_enc[1:] *= 4

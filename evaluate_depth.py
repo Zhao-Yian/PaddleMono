@@ -67,7 +67,6 @@ def pytorch2paddle(opt, torch_path, paddle_path):
         state_dict = torch.load(os.path.join(torch_path,'{}.pth'.format(model_name)), map_location=map_location)
 
         paddle_state_dict = OrderedDict()
-        paddle_list = paddle_list.readlines()
         torch_list = state_dict.keys()
         for p in paddle_list:
             p = p.strip()

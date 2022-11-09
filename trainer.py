@@ -191,6 +191,8 @@ class Trainer:
         if self.opt.freeze_bn: return self.set_eval()
         for m in self.models.values():
             m.train()
+            for param in m.parameters():
+                param.trainable = True
 
     def set_eval(self):
         """
