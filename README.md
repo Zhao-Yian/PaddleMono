@@ -56,9 +56,11 @@ It is easy to design your own method following the 3 steps:
 ## Results
 
 We present results of our implementations on the popular benchmarks: KITTI2015. 
-We did not perform careful parameter tuning and simply used the default config files. 
+We did not perform careful parameter tuning and simply used the default config files for Monodepth2. 
 You can easily reproduce our results using provided shell scripts!
 
+For MLDA Net, it is not fully aligned yet. 
+We show the test accuracy using the torch weights converted to paddle.
 
 ### KITTI
 
@@ -66,7 +68,9 @@ You can easily reproduce our results using provided shell scripts!
 |-------------|-------|-------|-------|-------|--------|--------|---------|
 | Monodepth2_640x192 | 0.109 | 0.880 | 4.903 | 0.200 | 0.868  | 0.955 | 0.979   |
 | Monodepth2_1024x320 | 0.104 | 0.798 | 4.619 | 0.192 | 0.879  | 0.958 | 0.980   |
-| Depth Hints_640x192 | 0.109 | 0.799 | 4.711 | 0.188 | 0.882  | 0.959 | 0.981   |
+| Depth Hints_640x192 | 0.110 | 0.818 | 4.728 | 0.189 | 0.881  | 0.959 | 0.981   |
+| Depth Hints_1024x320 | 0.109 | 0.794 | 4.474 | 0.185 | 0.887  | 0.963 | 0.982   |
+| MLDANet_640x192 | 0.108 | 0.829 | 4.678 | 0.184 | 0.885  | 0.962 | 0.983   |
 
 
 ## Contribution
