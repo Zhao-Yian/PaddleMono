@@ -20,7 +20,7 @@ PaddleMono是一款基于 PaddlePaddle 的单目深度估计工具箱，是 Padd
 
 1. [Monodepth2 (ICCV2019)[1]](configs/monodepthv2/README.md)
 2. [MLDA-Net [2]](configs/mldanet/README.md)
-3. [Depth Hints (ICCV2019)[3]](configs/monodepthv2/README.md)
+3. [Depth Hints (ICCV2019)[3]](configs/depth_hints/README.md)
 
 请点击上方的超链接查看每个算法的实现细节
 
@@ -33,6 +33,7 @@ git clone https://github.com/Zhao-Yian/Paddle-Mono.git
 cd code/Paddle-Mono
 pip install -r requirements.txt
 ```
+请在Python 3.9中使用PaddleMono.
 
 ## 数据集准备
 你可以参照 [dataset_prepare](data_prepare/data_prepare.md) 来进行数据集的准备.
@@ -54,7 +55,7 @@ pip install -r requirements.txt
 
 ## 结果
 
-我们在KITTI2015上评测了PaddleMono已经实现的算法.。
+我们在KITTI2015上评测了PaddleMono已经实现的算法。
 
 注意我们并没有通过额外的技巧来优化Monodepth2模型的结果，因此你可以直接使用.sh的脚本文件来复现我们在表格中报告的精度。
 

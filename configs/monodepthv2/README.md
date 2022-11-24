@@ -10,24 +10,23 @@ Per-pixel ground-truth depth data is challenging to acquire at scale. To overcom
 ## Training
 **KITTI Datasets Pretraining**
 
-run the script `./configs/monodepthv2/mdp.sh` to pre-train on KITTI datsets. Please update `--data_path` in the bash file as your training data path.
+Run the script `./configs/monodepthv2/mdp.sh` to pre-train on KITTI datsets. Please update `--data_path` in the bash file as your training data path.
 
 **Finetuning**
-
-run the script `./configs/monodepthv2/mdp.sh` to jointly finetune the pre-train model on KITTI dataset. 
+After training on 640x192 resolution, increase the resolution to 1024x320 for fine-tuning.
+Run the script `./configs/monodepthv2/mdp.sh` to jointly finetune the pre-train model on KITTI dataset. 
 Please update `--data_path` and `--load_weights_folder` as your training data path and pretrained weights folder.
 
 ## Evaluation
-**Joint Generalization**
 
 run the script `./configs/monodepthv2/mdp.sh` to evaluate the model.
 
 ## Models
 
-[Pretraining Model](https://github.com/Zhao-Yian/PaddleMono/blob/master/weights/weights_best_640x192.zip)
+[Pretraining Model](https://drive.google.com/file/d/1z3_ehxeDdmaQwSlUBXblF-mDnWl48hbK/view?usp=share_link)
 You can use this checkpoint to reproduce the result of Monodepth2_640x192.
 
-[Finetuneing Moel](https://github.com/Zhao-Yian/PaddleMono/blob/master/weights/weights_best_1024x320.zip)
+[Finetuneing Moel](https://drive.google.com/file/d/198qXsrIV2d6K5layPTFPeXI3wmm_aFWx/view?usp=share_link)
 You can use this checkpoint to reproduce the result of Monodepth2_1024x320.
 
 ## Citation

@@ -22,19 +22,18 @@ As initial version, we support the following algoirthms. We are working on more 
 
 1. [Monodepth2 (ICCV2019)[1]](configs/monodepthv2/README.md)
 2. [MLDA-Net [2]](configs/mldanet/README.md)
-3. [Depth Hints (ICCV2019)[3]](configs/monodepthv2/README.md)
+3. [Depth Hints (ICCV2019)[3]](configs/depth_hints/README.md)
 
 Please click the hyperlink of each algorithm for more detailed explanation.
 
 ## Installation
-
 You can either git clone this whole repo by:
-
 ```
 git clone https://github.com/Zhao-Yian/Paddle-Mono.git
 cd code/Paddle-Mono
 pip install -r requirements.txt
 ```
+Please use PaddleMono in python 3.9.
 
 ## Dataset 
 see guidance in [dataset_prepare](data_prepare/data_prepare.md) for dataset preparation.
