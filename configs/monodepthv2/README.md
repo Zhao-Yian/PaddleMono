@@ -24,10 +24,10 @@ run the script `./configs/monodepthv2/mdp.sh` to evaluate the model.
 
 ## Models
 
-[Pretraining Model](https://github.com/lcarusWizard/monodepth2-paddle/releases/download/v0.1/best_640x192.zip)
+[Pretraining Model](https://github.com/Zhao-Yian/PaddleMono/blob/master/weights/weights_best_640x192.zip)
 You can use this checkpoint to reproduce the result of Monodepth2_640x192.
 
-[Finetuneing Moel](https://github.com/lcarusWizard/monodepth2-paddle/releases/download/v0.1/best_1024x320.zip)
+[Finetuneing Moel](https://github.com/Zhao-Yian/PaddleMono/blob/master/weights/weights_best_1024x320.zip)
 You can use this checkpoint to reproduce the result of Monodepth2_1024x320.
 
 ## Citation
