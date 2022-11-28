@@ -2,14 +2,14 @@
 GPU_ID=0
 data_dir=/data/kitti
 test_dir=/data/eigen
+depth_hints_path=/data/depth_hints
 log_dir=output/
 log_fine_dir=output_fine/
-output_dir=output/monodepthv2/models/weights_best
-output_fine_dir=output_fine/monodepthv2/models/weights_best
+output_dir=output/depth_hints/models/weights_best
+output_fine_dir=output_fine/depth_hints/models/weights_best
 
-
-# pretrain in KITTI
-CUDA_VISIBLE_DEVICES=$GPU_ID python train.py --config configs/monodepthv2/mdp.yml --use_stereo --data_path $data_dir --log_dir $log_dir
+# train in KITTI with depth hints
+CUDA_VISIBLE_DEVICES=$GPU_ID python train.py --config configs/monodepthv2/mdp.yml --log_dir $log_dir --data_dir $data_dir --use_stereo --use_depth_hints --depth_hint_path $depth_hints_path
 
 # fintune in KITTI
 CUDA_VISIBLE_DEVICES=$GPU_ID python train.py --config configs/monodepthv2/mdp.yml --data_path $data_dir --height 320 --width 1024 --use_stereo --log_dir $log_fine_dir --load_weights_folder $output_dir --batch_size 4 --num_epochs 2 --learning_rate 5e-5

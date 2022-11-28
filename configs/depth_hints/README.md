@@ -17,6 +17,27 @@ To train using depth hints:
   If you want to use it, please click [here](https://github.com/nianticlabs/depth-hints/blob/master/precompute_depth_hints.py).
   - Add the flag `--use_depth_hints` to your usual monodepth2 training command, optionally also setting `--depth_hint_path` (will default to <data_path>/depth_hints). See below for a full command.
 
+## Models
+
+[Pretraining Model](https://drive.google.com/file/d/1z3_ehxeDdmaQwSlUBXblF-mDnWl48hbK/view?usp=share_link)
+You can use this checkpoint to reproduce the result of depth_hints_640x192.
+
+[Finetuneing Model](https://drive.google.com/file/d/198qXsrIV2d6K5layPTFPeXI3wmm_aFWx/view?usp=share_link)
+You can use this checkpoint to reproduce the result of depth_hints_1024x320.
+
+[backbone weights](https://drive.google.com/file/d/1iVnt_6I0u2U4wo1ZeG1Iy2DvZ1Ltn-2l/view?usp=share_link)
+
+Please put pretraining model weights and backbone weights in the same directory (or different), and then specify `weights_init` as the directory path of backbone weights and specify `load_weights_folder` as the directory path of pretraining model weights when running the `evaluate_depth.py`.
+
+```text
+|-- weights/weights_best_640x192
+  |-- resnet18_pretrain.h5
+  |-- encoder.pdparams
+  |-- depth.pdparams
+  |-- pose_encoder.pdparams
+  |-- pose.pdparams
+```
+
 ## Citation
 If you find this code useful in your research, please cite:
 ```

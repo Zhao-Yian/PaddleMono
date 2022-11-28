@@ -9,7 +9,7 @@ def build_model(opt):
 
     if opt.type == "MLDANet":
         models["encoder"] = mldanet.ResnetEncoder_multi_sa_add_reduce_640(
-            opt.num_layers, opt.weights_init == "pretrained")
+            opt.num_layers, opt.weights_init)
         parameters_to_train += list(models["encoder"].parameters())
 
         models["depth"] = mldanet.DepthDecoderAttention_edge(
@@ -18,7 +18,7 @@ def build_model(opt):
 
         models["pose_encoder"] = mldanet.ResnetEncoder_multi_sa_add_reduce_640(
             opt.num_layers,
-            opt.weights_init == "pretrained",
+            opt.weights_init,
             num_input_images=num_pose_frames)
         parameters_to_train += list(models["pose_encoder"].parameters())
 

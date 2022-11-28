@@ -23,16 +23,24 @@ run the script `./configs/monodepthv2/mdp.sh` to evaluate the model.
 
 ## Models
 
-[Pretraining Model](https://drive.google.com/file/d/1z3_ehxeDdmaQwSlUBXblF-mDnWl48hbK/view?usp=share_link)
+[Pretraining Model]()
 You can use this checkpoint to reproduce the result of Monodepth2_640x192.
 
-[Finetuneing Model](https://drive.google.com/file/d/198qXsrIV2d6K5layPTFPeXI3wmm_aFWx/view?usp=share_link)
+[Finetuneing Model]()
 You can use this checkpoint to reproduce the result of Monodepth2_1024x320.
 
 [backbone weights](https://drive.google.com/file/d/1iVnt_6I0u2U4wo1ZeG1Iy2DvZ1Ltn-2l/view?usp=share_link)
 
-You can use this checkpoint to reproduce the result of MLDANet_640x192.
 Please put pretraining model weights and backbone weights in the same directory (or different), and then specify `weights_init` as the directory path of backbone weights and specify `load_weights_folder` as the directory path of pretraining model weights when running the `evaluate_depth.py`.
+
+```text
+|-- weights/weights_best_640x192
+  |-- resnet18_pretrain.h5
+  |-- encoder.pdparams
+  |-- depth.pdparams
+  |-- pose_encoder.pdparams
+  |-- pose.pdparams
+```
 
 ## Citation
 If you find this code useful in your research, please cite:
