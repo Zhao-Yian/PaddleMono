@@ -23,7 +23,10 @@ run the script `./configs/mldanet/mldanet.sh` to evaluate the model.
 
 ## Models
 [Pretraining Model](https://drive.google.com/file/d/1xcCF2bPqcbihQ6EZy_UpNK7jsUdsb69S/view?usp=share_link)
+[backbone weights](https://drive.google.com/file/d/1iVnt_6I0u2U4wo1ZeG1Iy2DvZ1Ltn-2l/view?usp=share_link)
+
 You can use this checkpoint to reproduce the result of MLDANet_640x192.
+Please put pretraining model weights and backbone weights in the same directory (or different), and then specify `weights_init` as the directory path of backbone weights and specify `load_weights_folder` as the directory path of pretraining model weights when running the `evaluate_depth.py`.
 
 ## Citation
 If you find this code useful in your research, please cite:

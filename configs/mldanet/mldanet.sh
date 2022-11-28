@@ -7,9 +7,6 @@ output_dir=output/mldanet/mldanet/models/weights_best
 # train in KITTI with depth hints
 CUDA_VISIBLE_DEVICES=$GPU_ID python train.py --config configs/mldanet/mldanet.yml --data_dir $data_dir --use_depth_hints --depth_hint_path $depth_hints_path
 
-# val in KITTI
-CUDA_VISIBLE_DEVICES=$GPU_ID python val.py --config configs/mldanet/mldanet.yml --load_weights_folder $output_dir
-
 # pretrain in KITTI w/o depth hints
 CUDA_VISIBLE_DEVICES=$GPU_ID python train.py --config configs/mldanet/mldanet.yml --data_path $data_dir
 

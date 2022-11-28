@@ -11,9 +11,6 @@ output_fine_dir=output_fine/monodepthv2/monodepthv2/models/weights_best
 # train in KITTI with depth hints
 CUDA_VISIBLE_DEVICES=$GPU_ID python train.py --config configs/monodepthv2/mdp.yml --log_dir $log_dir --data_dir $data_dir --use_stereo --use_depth_hints --depth_hint_path $depth_hints_path
 
-# val in KITTI
-CUDA_VISIBLE_DEVICES=$GPU_ID python val.py --config configs/monodepthv2/mdp.yml --load_weights_folder $output_dir
-
 # pretrain in KITTI w/o depth hints
 CUDA_VISIBLE_DEVICES=$GPU_ID python train.py --config configs/monodepthv2/mdp.yml --use_stereo --data_path $data_dir --log_dir $log_dir
 

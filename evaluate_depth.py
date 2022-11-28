@@ -10,7 +10,6 @@ from model.layers import disp_to_depth
 from utils import readlines, load_weight_file
 import datasets
 from model.core import build_model
-import torch
 from collections import OrderedDict
 import pickle
 from pathlib import Path
@@ -58,34 +57,6 @@ def batch_post_process_disparity(l_disp, r_disp):
     r_mask = l_mask[:, :, ::-1]
     return r_mask * l_disp + l_mask * r_disp + (1.0 - l_mask - r_mask) * m_disp
 
-
-def pytorch2paddle(opt, torch_path, paddle_path):
-    models, _ = build_model(opt)
-    for model_name in models.keys():
-        paddle_list = models[model_name].state_dict().keys()
-        map_location = torch.device('cpu')
-        state_dict = torch.load(os.path.join(torch_path,'{}.pth'.format(model_name)), map_location=map_location)
-
-        paddle_state_dict = OrderedDict()
-        torch_list = state_dict.keys()
-        for p in paddle_list:
-            p = p.strip()
-            t = p
-            if "mean" in p:
-                t = p.replace("_mean", "running_mean")
-            if "variance" in p:
-                t = p.replace("_variance", "running_var")
-            if t in torch_list:
-                if 'fc' not in p:
-                    paddle_state_dict[p] = state_dict[t].detach().cpu().numpy()
-                else:
-                    paddle_state_dict[p] = state_dict[t].detach().cpu().numpy().T
-            else:
-                print(p)
-
-        f = open(os.path.join(paddle_path, '{}.pdparams'.format(model_name)), 'wb')
-        pickle.dump(paddle_state_dict, f)
-        f.close()
 
 
 def evaluate(opt, load_weight_floder=None):

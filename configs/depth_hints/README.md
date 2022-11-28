@@ -13,6 +13,8 @@ The code for ***Depth Hints*** builds upon [Monodepth2](configs/monodepthv2/READ
 To train using depth hints:
   - Clone this repository
   - Run `python precompute_depth_hints.py  --data_path <your_KITTI_path>`, optionally setting `--save_path` (will default to <data_path>/depth_hints) and `--filenames` (will default to training and validation images for the eigen split). This will create the "fused" depth hints referenced in the paper. This process takes approximately 4 hours on a GPU.
+  At present, there are still some problems in calculating the recurrence of depth hints. You can first use the torch version of the script to generate the depth hints of the dataset.
+  If you want to use it, please click [here](https://github.com/nianticlabs/depth-hints/blob/master/precompute_depth_hints.py).
   - Add the flag `--use_depth_hints` to your usual monodepth2 training command, optionally also setting `--depth_hint_path` (will default to <data_path>/depth_hints). See below for a full command.
 
 ## Citation
