@@ -13,21 +13,41 @@ The code for ***Depth Hints*** builds upon [Monodepth2](configs/monodepthv2/READ
 To train using depth hints:
   - Clone this repository
   - Run `python precompute_depth_hints.py  --data_path <your_KITTI_path>`, optionally setting `--save_path` (will default to <data_path>/depth_hints) and `--filenames` (will default to training and validation images for the eigen split). This will create the "fused" depth hints referenced in the paper. This process takes approximately 4 hours on a GPU.
-  At present, there are still some problems in calculating the recurrence of depth hints. You can first use the torch version of the script to generate the depth hints of the dataset.
+  At present, there are still some problems in calculating the recurrence of depth hints. Currently, the depth hint dataset generation is not supported for paddledepth. You can use the torch version of the script to generate the depth hints of dataset.
   If you want to use it, please click [here](https://github.com/nianticlabs/depth-hints/blob/master/precompute_depth_hints.py).
   - Add the flag `--use_depth_hints` to your usual monodepth2 training command, optionally also setting `--depth_hint_path` (will default to <data_path>/depth_hints). See below for a full command.
+  
+**KITTI Datasets Pretraining**
+
+Run the script `./configs/depth_hints/depth_hints.sh` to pre-train on KITTI datsets. Please update `--data_path` in the bash file as your training data path and specify `weights_init` as the directory path of backbone weights, i.e., `/root/paddlejob/shenzhelun/PaddleMono-master/weights/backbone_weight/resnet18-pytorch`.
+
+**Finetuning**
+
+After training on 640x192 resolution, increase the resolution to 1024x320 for fine-tuning.
+Run the script `./configs/depth_hints/depth_hints.sh` to jointly finetune the pre-train model on KITTI dataset. 
+Please update `--data_path` and `--load_weights_folder` as your training data path and pretrained weights folder.
+
+## Evaluation
+
+run the script `./configs/depth_hints/depth_hints.sh` to evaluate the model.
 
 ## Models
 
 [Pretraining Model](https://drive.google.com/file/d/1z3_ehxeDdmaQwSlUBXblF-mDnWl48hbK/view?usp=share_link)
+
 You can use this checkpoint to reproduce the result of depth_hints_640x192.
 
 [Finetuneing Model](https://drive.google.com/file/d/198qXsrIV2d6K5layPTFPeXI3wmm_aFWx/view?usp=share_link)
+
 You can use this checkpoint to reproduce the result of depth_hints_1024x320.
 
 [backbone weights](https://drive.google.com/file/d/1iVnt_6I0u2U4wo1ZeG1Iy2DvZ1Ltn-2l/view?usp=share_link)
 
-Please put pretraining model weights and backbone weights in the same directory (or different), and then specify `weights_init` as the directory path of backbone weights and specify `load_weights_folder` as the directory path of pretraining model weights when running the `evaluate_depth.py`.
+You can use this checkpoint to load the backbone weights of resnet18.
+
+[comment]: <> (Please put pretraining model weights and backbone weights in the same directory &#40;or different&#41;, and then specify `weights_init` as the directory path of backbone weights and specify `load_weights_folder` as the directory path of pretraining model weights when running the `evaluate_depth.py`.)
+Please put pretraining model weights and backbone weights in the same directory and specify `load_weights_folder` 
+as the directory path of pretraining model weights, i.e., `weights/weights_best_640x192/` when running the `depth_hints.sh`.
 
 ```text
 |-- weights/weights_best_640x192
@@ -38,6 +58,7 @@ Please put pretraining model weights and backbone weights in the same directory 
   |-- pose.pdparams
 ```
 
+If you want to put the backbone weights on the other directory, please further specify `weights_init` as the directory path of backbone weights, i.e., `/root/paddlejob/shenzhelun/PaddleMono-master/weights/backbone_weight/resnet18-pytorch`
 ## Citation
 If you find this code useful in your research, please cite:
 ```
