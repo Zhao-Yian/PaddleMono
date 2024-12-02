@@ -115,22 +115,18 @@ providing a flexible toolkit to reimplement existing methods and develop their n
 
 ## ✏️ Citation
 
-[comment]: <> (If you think this toolkit or the results are helpful to you and your research, please cite us!)
-
-[comment]: <> (```)
-
-[comment]: <> (@Misc{deepda,)
-
-[comment]: <> (howpublished = {\url{https://github.com/jindongwang/transferlearning/tree/master/code/DeepDA}},   )
-
-[comment]: <> (title = {DeepDA: Deep Domain Adaptation Toolkit},  )
-
-[comment]: <> (author = {Wang, Jindong and Hou, Wenxin})
-
-[comment]: <> (}  )
-
-[comment]: <> (```)
-
+If you find this toolkit or the results are helpful to you and your research, please cite us!
+```
+@software{Zhao_PaddleMono_2024,
+author = {Zhao, Yian and Shen, Zhelun and Zheng, Bopei},
+license = {Apache-2.0},
+month = dec,
+title = {{PaddleMono: A Unified Framework for Monocular Depth Estimation}},
+url = {https://github.com/Zhao-Yian/PaddleMono},
+version = {1.0},
+year = {2024}
+}
+```
 
 
 ## ✨ Contact
