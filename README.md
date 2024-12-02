@@ -17,7 +17,7 @@ on PaddlePaddle for Monocular Depth Estimation. It is a part of the [PaddleDepth
     <img src="./assets/monocular.gif" width = "400" />
 </div>
 
-## 😮 Implemented Algorithms
+## 📣 Implemented Algorithms
 
 As initial version, we support the following algoirthms. We are working on more algorithms. Of course, you are welcome to add your algorithms here.
 
