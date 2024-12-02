@@ -6,17 +6,18 @@
 [English](README.md)| [简体中文](README_zh-CN.md)
 
 </div>
+
 A lightweight, easy-to-extend, easy-to-learn, high-performance, and for-fair-comparison toolkit based 
-on PaddlePaddle for Monocular Depth Estimation. It is a part of the Paddledepth project.
+on PaddlePaddle for Monocular Depth Estimation. It is a part of the [PaddleDepth](https://github.com/PaddlePaddle/PaddleDepth) project.
 
 ## 💡 Visualization
 
-### monocular depth estimation
+### Monocular Depth Estimation
 <div align="center">
     <img src="./assets/monocular.gif" width = "400" />
 </div>
 
-## 🦄 Implemented Algorithms
+## 😮 Implemented Algorithms
 
 As initial version, we support the following algoirthms. We are working on more algorithms. Of course, you are welcome to add your algorithms here.
 
@@ -37,11 +38,11 @@ As initial version, we support the following algoirthms. We are working on more 
 
 Please click the hyperlink of each algorithm for more detailed explanation.
 
-## 🚀 Installation
+## 📍 Installation
 You can either git clone this whole repo by:
 ```
-git clone https://github.com/PaddlePaddle/PaddleDepth.git
-cd Paddle-Mono
+git clone https://github.com/Zhao-Yian/PaddleMono.git
+cd PaddleMono
 pip install -r requirements.txt
 ```
 Please use PaddleMono in python 3.9.
@@ -49,7 +50,7 @@ Please use PaddleMono in python 3.9.
 ## 🏕️ Dataset 
 see guidance in [dataset_prepare](data_prepare/data_prepare.md) for dataset preparation.
 
-## 📍 Usage
+## 🤖 Usage
 
 1. Modify the configuration file in the corresponding directories in `configs`. 
 2. Run the `train.py` with specified config, for example, `python train.py  --config configs/monodepthv2/mdp.yml`
@@ -63,7 +64,7 @@ It is easy to design your own method with following steps:
 1. Check and write your own model's to `model`
 2. Write your own config file (.sh or .yml)
 
-## ⭐ Results
+## 🚀 Results
 
 We present results of our implementations on the popular KITTI benchmarks with Eigen split. 
 
@@ -94,7 +95,7 @@ The toolkit is under active development and contributions are welcome!
 Feel free to submit issues or emails to ask questions or contribute your code. 
 If you would like to implement new features, please submit a issue or emails to discuss with us first.
 
-## 🌀 Acknowledgement
+## 👍 Acknowledgement
 PaddleDepth is an open source project that is contributed by researchers and engineers 
 from various colleges and companies. 
 We appreciate all the contributors who implement their methods or add new features, 
@@ -102,7 +103,7 @@ as well as users who give valuable feedbacks.
 We wish that the toolbox and benchmark could serve the growing research community by 
 providing a flexible toolkit to reimplement existing methods and develop their new algorithms.
 
-## References
+## 🤝 References
 
 [1] Godard C, Mac Aodha O, Firman M, et al. Digging into self-supervised monocular depth estimation[C]//Proceedings of the IEEE/CVF International Conference on Computer Vision. 2019: 3828-3838.
 
@@ -112,7 +113,7 @@ providing a flexible toolkit to reimplement existing methods and develop their n
 
 [4] LEE J, HAN M, KO D, et al. From big to small: Multi-scale local planar guidance for monocular depth estimation[Z]//arXiv: Computer Vision and Pattern Recognition. 2019.
 
-[comment]: <> (## Citation)
+## ✏️ Citation
 
 [comment]: <> (If you think this toolkit or the results are helpful to you and your research, please cite us!)
 
@@ -132,7 +133,7 @@ providing a flexible toolkit to reimplement existing methods and develop their n
 
 
 
-## Contact
+## ✨ Contact
 
 - [Yian Zhao](https://github.com/Zhao-Yian/): zhaoyian.zh@gmail.com
 - [Zhelun Shen](https://github.com/gallenszl): shenzhelun@pku.edu.cn
